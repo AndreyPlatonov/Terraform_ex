@@ -2,14 +2,24 @@ provider "aws" {
   region = "us-west-2"
 }
 
-data "aws_ami" "ubuntu" {
+data "aws_ami" "latest_ubuntu" {
+         most_recent = true
+         owners      = ["amazon"]
 
-    most_recent=true
-    owners=["amazon"]
+  filter {
+      name = "name"
+      values = ["*Ubuntu*"]
+  }
+
+  filter {
+      name = "owner-alias"
+      values = ["amazon"]
+  }
 }
 
+
 resource "aws_instance" "web" {
-  ami           = data.aws_ami.ubuntu.id
+  ami           = data.aws_ami.latest_ubuntu.id
 
   instance_type = "t3.micro"
 
@@ -19,7 +29,7 @@ resource "aws_instance" "web" {
 
   monitoring=true
   
-  key_name="keys_ec2"
+
 
   tags = {
     Name = "TF_EC2"
